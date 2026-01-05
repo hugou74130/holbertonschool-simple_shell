@@ -34,7 +34,7 @@ int main(void)
 		if (strlen(line) == 0)
 			continue;
 
-		i = 0;
+		i = 0; // cutt 
 		token = strtok(line, " \t");
 		while (token != NULL && i < MAX_ARGS - 1)
 		{

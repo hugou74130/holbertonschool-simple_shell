@@ -6,6 +6,7 @@
  *
  * Return: 1 if built-in, 0 otherwise
  */
+ 
 int is_builtin(char *command)
 {
 	builtin_t builtins[] = {
@@ -32,6 +33,7 @@ int is_builtin(char *command)
  *
  * Return: 0 on success, -1 on failure
  */
+
 int execute_builtin(char *command)
 {
 	builtin_t builtins[] = {
