@@ -20,12 +20,11 @@ int builtin_env(void)
 /**
  * builtin_exit - Exits the shell
  *
- * Return: Always 0
+ * Return: EXIT_SHELL to request shell termination
  */
 int builtin_exit(void)
 {
-	exit(0);
-	return (0);
+	return (EXIT_SHELL);
 }
 
 /**
