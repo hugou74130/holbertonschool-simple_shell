@@ -5,11 +5,11 @@
  *
  * Return: PATH string or NULL
  */
+
 char *get_path(void)
 {
 	return (getenv("PATH"));
 }
-
 
 char *find_command(char *command)
 {

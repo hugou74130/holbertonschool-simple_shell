@@ -21,14 +21,11 @@ int main(void)
 
 	while (1)
 	{
-		/* Display prompt */
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
 
-		/* Read command */
 		nread = getline(&line, &len, stdin);
 
-		/* Handle EOF */
 		if (nread == -1)
 		{
 			if (isatty(STDIN_FILENO))
@@ -36,15 +33,12 @@ int main(void)
 			break;
 		}
 
-		/* Remove newline */
 		if (line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 
-		/* Skip empty lines */
 		if (strlen(line) == 0)
 			continue;
 
-		/* Parse command line */
 		i = 0;
 		token = strtok(line, " \t");
 		while (token != NULL && i < MAX_ARGS - 1)
@@ -55,22 +49,18 @@ int main(void)
 		}
 		argv[i] = NULL;
 
-		
 		if (strcmp(argv[0], "exit") == 0)
 		{
 			break;
 		}
-		/* Find command in PATH */
 		command_path = find_command(argv[0]);
 
 		if (command_path == NULL)
 		{
-			/* Command not found - don't fork */
 			fprintf(stderr, "./shell: No such file or directory\n");
 			continue;
 		}
 
-		/* Fork only if command exists */
 		pid = fork();
 
 		if (pid == -1)
@@ -81,7 +71,6 @@ int main(void)
 
 		if (pid == 0)
 		{
-			/* Child process */
 			if (execve(command_path, argv, environ) == -1)
 			{
 				perror("./shell");
@@ -90,7 +79,6 @@ int main(void)
 		}
 		else
 		{
-			/* Parent process */
 			wait(&status);
 		}
 	}

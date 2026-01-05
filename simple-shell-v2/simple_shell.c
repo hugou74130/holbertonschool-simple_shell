@@ -12,6 +12,7 @@
  *
  * Return: Always 0
  */
+
 int main(void)
 {
 	char *line = NULL;
@@ -26,14 +27,11 @@ int main(void)
 
 	while (1)
 	{
-		/* Display prompt */
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, "#cisfun$ ", 9);
 
-		/* Read command */
 		nread = getline(&line, &len, stdin);
 
-		/* Handle EOF */
 		if (nread == -1)
 		{
 			if (isatty(STDIN_FILENO))
@@ -41,26 +39,22 @@ int main(void)
 			break;
 		}
 
-		/* Remove newline */
 		if (line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 
-		/* Skip empty lines */
 		if (strlen(line) == 0)
 			continue;
 
-		/* Tokenize the line (split by spaces) */
 		i = 0;
-		token = strtok(line, " \t");  /* Split by space and tab */
+		token = strtok(line, " \t");
 		while (token != NULL && i < MAX_ARGS - 1)
 		{
 			argv[i] = token;
 			i++;
 			token = strtok(NULL, " \t");
 		}
-		argv[i] = NULL;  /* NULL-terminate the array */
+		argv[i] = NULL;
 
-		/* Fork and execute */
 		pid = fork();
 
 		if (pid == -1)
@@ -71,7 +65,6 @@ int main(void)
 
 		if (pid == 0)
 		{
-			/* Child process */
 			if (execve(argv[0], argv, environ) == -1)
 			{
 				fprintf(stderr, "./shell: No such file or directory\n");
@@ -80,7 +73,6 @@ int main(void)
 		}
 		else
 		{
-			/* Parent process */
 			wait(&status);
 		}
 	}
