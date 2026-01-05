@@ -4,21 +4,22 @@
  * run_command - Execute a command with built-in and PATH handling.
  * @argv: NULL-terminated array of arguments (argv[0] is the command name).
  *
- * Return: 0 on success, 1 on system error, 127 if command is not found.
+ * Return: 0 on success, 1 on system error, 127 if command is not found
+ * EXIT_SHELL if the exit built-in is invoked.
  */
 
 static int run_command(char *argv[])
 {
 	char *command_path;
 	pid_t pid;
-	int status;
+	int status, ret;
 
 	if (argv[0] == NULL)
 		return (0);
 	if (is_builtin(argv[0]))
 	{
-		execute_builtin(argv[0]);
-		return (0);
+		ret = execute_builtin(argv[0]);
+		return (ret);
 	}
 	command_path = find_command(argv[0]);
 	if (command_path == NULL)
@@ -64,7 +65,7 @@ int main(void)
 	ssize_t nread;
 	char *argv[MAX_ARGS];
 	char *token;
-	int i;
+	int i, status;
 
 	while (1)
 	{
@@ -92,7 +93,9 @@ int main(void)
 		}
 		argv[i] = NULL;
 
-		run_command(argv);
+		status = run_command(argv);
+		if (status == EXIT_SHELL)
+			break;
 	}
 	free(line);
 	return (0);

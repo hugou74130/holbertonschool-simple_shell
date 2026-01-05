@@ -11,6 +11,7 @@
 #define MAX_ARGS 1024
 #define MAX_PATH 4096
 #define PROMPT "-_- \\_(ツ)_/ $ "
+#define EXIT_SHELL -2
 
 extern char **environ;
 
