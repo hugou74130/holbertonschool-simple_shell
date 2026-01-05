@@ -48,6 +48,9 @@ static int run_command(char *argv[])
 			perror("./shell");
 			return (1);
 		}
+		if (!WIFEXITED(status))
+			return (1);
+		return (WEXITSTATUS(status));
 	}
 	return (0);
 }
@@ -66,6 +69,7 @@ int main(void)
 	char *argv[MAX_ARGS];
 	char *token;
 	int i, status;
+	int last_status = 0;
 
 	while (1)
 	{
@@ -92,11 +96,14 @@ int main(void)
 			token = strtok(NULL, " \t");
 		}
 		argv[i] = NULL;
+		if (argv[0] == NULL)
+			continue;
 
 		status = run_command(argv);
 		if (status == EXIT_SHELL)
 			break;
+		last_status = status;
 	}
 	free(line);
-	return (0);
+	return (last_status);
 }
