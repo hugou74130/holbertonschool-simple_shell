@@ -71,7 +71,10 @@ char *find_command(char *command)
 	static char full_path[MAX_PATH];
 	size_t len_command;
 
-	if (command[0] == '/' || command[0] == '.')
+	if (command == NULL || command[0] == '\0')
+		return (NULL);
+
+	if ((strchr(command, '/') != NULL) || command[0] == '.')
 	{
 		if (access(command, X_OK) == 0)
 			return (command);

@@ -16,14 +16,14 @@ static int spawn_and_wait(char *command_path, char *argv[])
 	pid = fork();
 	if (pid == -1)
 	{
-		perror("./shell");
+		perror(SHELL_NAME);
 		return (1);
 	}
 	if (pid == 0)
 	{
 		if (execve(command_path, argv, environ) == -1)
 		{
-			perror("./shell");
+			perror(SHELL_NAME);
 			exit(126);
 		}
 	}
@@ -31,7 +31,7 @@ static int spawn_and_wait(char *command_path, char *argv[])
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			perror("./shell");
+			perror(SHELL_NAME);
 			return (1);
 		}
 		if (!WIFEXITED(status))
@@ -64,7 +64,13 @@ static int run_command(char *argv[])
 	command_path = find_command(argv[0]);
 	if (command_path == NULL)
 	{
-		fprintf(stderr, "./shell: %s: No such file or directory\n", argv[0]);
+		if (strchr(argv[0], '/') != NULL)
+		{
+			fprintf(stderr, "%s: %s: No such file or directory\n", SHELL_NAME, argv[0]);
+		} else
+		{
+			fprintf(stderr, "%s: %s: not found\n", SHELL_NAME, argv[0]);
+		}
 		return (127);
 	}
 	return (spawn_and_wait(command_path, argv));

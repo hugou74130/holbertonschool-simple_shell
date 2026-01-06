@@ -12,6 +12,7 @@
 #define MAX_PATH 4096
 #define PROMPT "-_- \\_(ツ)_/ $ "
 #define EXIT_SHELL -2
+#define SHELL_NAME "./hsh"
 
 extern char **environ;
 
