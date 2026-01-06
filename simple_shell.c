@@ -1,14 +1,16 @@
 #include "shell.h"
 
 /**
- * spawn_and_wait - Forks a child process, executes command, and waits.
+ * spawn_and_wait - Forks a child process, executes command, and waits for it.
  * @command_path: Full path to the executable to run.
- * @argv: NULL-terminated arguments array for execve.
+ * @args: NULL-terminated array of arguments to pass to execve.
+ * @shell_name: Name of the shell program (used for error messages).
  *
  * Return: Exit status of the child on success, 1 on system error.
  */
 
-static int spawn_and_wait(char *command_path, char *argv[])
+
+static int spawn_and_wait(char *command_path, char *args[], char *shell_name)
 {
 	pid_t pid;
 	int status;
@@ -16,14 +18,14 @@ static int spawn_and_wait(char *command_path, char *argv[])
 	pid = fork();
 	if (pid == -1)
 	{
-		perror(SHELL_NAME);
+		perror(shell_name);
 		return (1);
 	}
 	if (pid == 0)
 	{
-		if (execve(command_path, argv, environ) == -1)
+		if (execve(command_path, args, environ) == -1)
 		{
-			perror(SHELL_NAME);
+			perror(shell_name);
 			exit(126);
 		}
 	}
@@ -31,7 +33,7 @@ static int spawn_and_wait(char *command_path, char *argv[])
 	{
 		if (waitpid(pid, &status, 0) == -1)
 		{
-			perror(SHELL_NAME);
+			perror(shell_name);
 			return (1);
 		}
 		if (!WIFEXITED(status))
@@ -42,52 +44,57 @@ static int spawn_and_wait(char *command_path, char *argv[])
 }
 
 /**
- * run_command - Execute a command with built-in and PATH handling.
- * @argv: NULL-terminated array of arguments (argv[0] is the command name).
+ * run_command - Executes a command with built-in and PATH handling.
+ * @args: NULL-terminated array of arguments (args[0] is the command name).
+ * @shell_name: Name of the shell program (used for error messages).
  *
- * Return: 0 on success, 1 on system error, 127 if command is not found
+ * Return: 0 on success, 1 on system error, 127 if command is not found,
  * EXIT_SHELL if the exit built-in is invoked.
  */
 
-static int run_command(char *argv[])
+
+static int run_command(char *args[], char *shell_name)
 {
 	char *command_path;
 	int ret;
 
-	if (argv[0] == NULL)
+	if (args[0] == NULL)
 		return (0);
-	if (is_builtin(argv[0]))
+	if (is_builtin(args[0]))
 	{
-		ret = execute_builtin(argv[0]);
+		ret = execute_builtin(args[0]);
 		return (ret);
 	}
-	command_path = find_command(argv[0]);
+	command_path = find_command(args[0]);
 	if (command_path == NULL)
 	{
-		if (strchr(argv[0], '/') != NULL)
+		if (strchr(args[0], '/') != NULL)
 		{
-			fprintf(stderr, "%s: %s: No such file or directory\n", SHELL_NAME, argv[0]);
+			fprintf(stderr, "%s: %s: No such file or directory\n", shell_name, args[0]);
 		} else
 		{
-			fprintf(stderr, "%s: %s: not found\n", SHELL_NAME, argv[0]);
+			fprintf(stderr, "%s: %s: not found\n", shell_name, args[0]);
 		}
 		return (127);
 	}
-	return (spawn_and_wait(command_path, argv));
+	return (spawn_and_wait(command_path, args, shell_name));
 }
 
 /**
- * main - Simple shell with PATH support and built-ins
+ * main - Entry point for the simple shell.
+ * @argc: Number of command-line arguments.
+ * @argv: Array of command-line arguments (argv[0] is the program name).
  *
- * Return: Always 0
+ * Return: Exit status of the last executed command.
  */
 
-int main(void)
+
+int main(int argc __attribute__((unused)), char **argv)
 {
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
-	char *argv[MAX_ARGS], *token;
+	char *args[MAX_ARGS], *token;
 	int i, status;
 	int last_status = 0;
 
@@ -110,14 +117,14 @@ int main(void)
 		token = strtok(line, " \t");
 		while (token != NULL && i < MAX_ARGS - 1)
 		{
-			argv[i] = token;
+			args[i] = token;
 			i++;
 			token = strtok(NULL, " \t");
 		}
-		argv[i] = NULL;
-		if (argv[0] == NULL)
+		args[i] = NULL;
+		if (args[0] == NULL)
 			continue;
-		status = run_command(argv);
+		status = run_command(args, argv[0]);
 		if (status == EXIT_SHELL)
 			break;
 		last_status = status;
