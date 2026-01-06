@@ -42,4 +42,6 @@ int execute_builtin(char *command);
 int is_builtin(char *command);
 char *_getenv(const char *name);
 
+int parse_line(char *line, char **argv, int max_args);
+
 #endif

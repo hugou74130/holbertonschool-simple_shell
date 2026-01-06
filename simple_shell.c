@@ -90,8 +90,8 @@ int main(int ac __attribute__((unused)), char **av)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t nread;
-	char *argv[MAX_ARGS], *token;
-	int i, status;
+	char *argv[MAX_ARGS];
+	int argc, status;
 	int last_status = 0;
 	unsigned long int line_count = 0;
 
@@ -99,6 +99,7 @@ int main(int ac __attribute__((unused)), char **av)
 	{
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
+
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
@@ -107,21 +108,16 @@ int main(int ac __attribute__((unused)), char **av)
 			break;
 		}
 		line_count++;
+
 		if (line[nread - 1] == '\n')
 			line[nread - 1] = '\0';
 		if (strlen(line) == 0)
 			continue;
-		i = 0;
-		token = strtok(line, " \t");
-		while (token != NULL && i < MAX_ARGS - 1)
-		{
-			argv[i] = token;
-			i++;
-			token = strtok(NULL, " \t");
-		}
-		argv[i] = NULL;
-		if (argv[0] == NULL)
+
+		argc = parse_line(line, argv, MAX_ARGS);
+		if (argc == 0)
 			continue;
+
 		status = run_command(argv, av[0], line_count);
 		if (status == EXIT_SHELL)
 			break;
