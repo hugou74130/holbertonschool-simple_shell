@@ -7,6 +7,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include <errno.h>
 
 #define MAX_ARGS 1024
 #define MAX_PATH 4096
@@ -22,7 +24,6 @@ extern char **environ;
  * @name: Name of the built-in command (e.g., "exit", "env", "cd").
  * @func: Pointer to the function that executes the built-in command.
  */
-
 typedef struct builtin_s
 {
 	char *name;

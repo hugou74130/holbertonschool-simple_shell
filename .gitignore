@@ -1,0 +1,9 @@
+# Editor / IDE
+.vscode/
+
+# Build artifacts
+*.o
+a.out
+
+# Shell executable (your compiled binary)
+hsh

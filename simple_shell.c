@@ -1,5 +1,11 @@
 #include "shell.h"
 
+static void handle_sigint(int sign)
+{
+	(void) sign;
+	write(STDOUT_FILENO, "\n", 1);
+}
+
 /**
  * spawn_and_wait - Forks a child process, executes command, and waits for it.
  * @command_path: Full path to the executable to run.
@@ -98,13 +104,26 @@ int main(int argc __attribute__((unused)), char **argv)
 	int i, status;
 	int last_status = 0;
 
+	struct sigaction sa;
+	sa.sa_handler = handle_sigint;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sigaction(SIGINT, &sa, NULL);
+
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
+
 		nread = getline(&line, &len, stdin);
 		if (nread == -1)
 		{
+			if (errno == EINTR)
+			{
+				errno = 0;
+				continue;
+			}
 			if (isatty(STDIN_FILENO))
 				write(STDOUT_FILENO, "\n", 1);
 			break;
@@ -113,6 +132,7 @@ int main(int argc __attribute__((unused)), char **argv)
 			line[nread - 1] = '\0';
 		if (strlen(line) == 0)
 			continue;
+
 		i = 0;
 		token = strtok(line, " \t");
 		while (token != NULL && i < MAX_ARGS - 1)
