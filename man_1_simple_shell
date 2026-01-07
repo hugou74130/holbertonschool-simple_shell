@@ -1,298 +1,114 @@
-     1	.TH SIMPLE_SHELL 1 "December 2024" "Version 1.0" "Simple Shell Manual"
-     2
-     3	.SH NAME
-     4	simple_shell \- simple UNIX command interpreter
-     5
-     6	.SH SYNOPSIS
-     7	.B simple_shell
-     8	.RI [ command_file ]
-     9
-    10	.SH DESCRIPTION
-    11	.B Simple Shell
-    12	is a basic UNIX command line interpreter that reads commands from either a file or standard input and executes them.
-    13
-    14	.B Simple Shell
-    15	is designed to replicate basic functionalities of the
-    16	.B sh
-    17	shell. It provides a simple prompt for interactive use and can also execute commands from files or pipes.
-    18
-    19	.SH INVOCATION
-    20	.B Simple Shell
-    21	can be invoked both interactively and non-interactively.
-    22
-    23	.SS Interactive Mode
-    24	If
-    25	.B simple_shell
-    26	is invoked with standard input connected to a terminal, an interactive shell is started. The shell displays a prompt and waits for user input.
-    27
-    28	.RS
-    29	.nf
-    30	$ ./shell
-    31	-_- \\_(ツ)_/ $ ls
-    32	file1 file2
-    33	-_- \\_(ツ)_/ $ exit
-    34	$
-    35	.fi
-    36	.RE
-    37
-    38	.SS Non-Interactive Mode
-    39	If
-    40	.B simple_shell
-    41	is invoked with standard input not connected to a terminal (for example, through a pipe or redirection), it reads and executes commands without displaying a prompt.
-    42
-    43	.RS
-    44	.nf
-    45	$ echo "ls" | ./shell
-    46	file1 file2
-    47	$
-    48	.fi
-    49	.RE
-    50
-    51	.SH COMMAND EXECUTION
-    52	Commands are read from standard input. If the command is a built-in, it is executed directly by the shell. Otherwise, the shell searches for the command in the directories listed in the
-    53	.B PATH
-    54	environment variable.
-    55
-    56	.SS Command Search and Execution
-    57	.IP 1. 4
-    58	If the command contains a slash (/), it is executed directly as an absolute or relative path.
-    59	.IP 2. 4
-    60	If the command is a built-in command, it is executed by the shell itself.
-    61	.IP 3. 4
-    62	Otherwise, the shell searches for the command in each directory listed in the
-    63	.B PATH
-    64	environment variable, in order.
-    65	.IP 4. 4
-    66	If found, the command is executed in a child process using
-    67	.BR fork (2)
-    68	and
-    69	.BR execve (2).
-    70
-    71	.SH COMMAND SYNTAX
-    72	Commands consist of a command name optionally followed by arguments, separated by whitespace (spaces or tabs).
-    73
-    74	.RS
-    75	.nf
-    76	command [arg1] [arg2] ...
-    77	.fi
-    78	.RE
-    79
-    80	.SH BUILT-IN COMMANDS
-    81	The following commands are built into the shell:
-    82
-    83	.TP
-    84	.B exit
-    85	Exit the shell. The exit status is the status of the last command executed.
-    86
-    87	.RS
-    88	.nf
-    89	-_- \\_(ツ)_/ $ exit
-    90	.fi
-    91	.RE
-    92
-    93	.TP
-    94	.B env
-    95	Print the current environment variables.
-    96
-    97	.RS
-    98	.nf
-    99	-_- \\_(ツ)_/ $ env
-   100	HOME=/home/user
-   101	PATH=/usr/local/bin:/usr/bin:/bin
-   102	USER=user
-   103	...
-   104	.fi
-   105	.RE
-   106
-   107	.SH ENVIRONMENT
-   108	.TP
-   109	.B PATH
-   110	A colon-separated list of directories in which the shell looks for commands. If a command name contains no slashes, the shell searches each directory in
-   111	.B PATH
-   112	for an executable file with that name.
-   113
-   114	.TP
-   115	.B HOME
-   116	The home directory of the current user.
-   117
-   118	.TP
-   119	.B USER
-   120	The username of the current user.
-   121
-   122	.SH EXIT STATUS
-   123	The exit status of
-   124	.B simple_shell
-   125	is the exit status of the last command executed, or zero if no command was executed.
-   126
-   127	The following exit statuses have special meanings:
-   128	.TP
-   129	.B 0
-   130	Success
-   131	.TP
-   132	.B 126
-   133	Command found but not executable
-   134	.TP
-   135	.B 127
-   136	Command not found
-   137	.TP
-   138	.B 130
-   139	Command terminated by Ctrl+C
-   140
-   141	.SH EXAMPLES
-   142	.SS Example 1: Interactive Mode
-   143	.RS
-   144	.nf
-   145	$ ./shell
-   146	-_- \\_(ツ)_/ $ pwd
-   147	/home/user
-   148	-_- \\_(ツ)_/ $ ls -l
-   149	total 24
-   150	-rw-r--r-- 1 user user 1234 Dec 31 simple_shell.c
-   151	-rwxr-xr-x 1 user user 8192 Dec 31 shell
-   152	-_- \\_(ツ)_/ $ echo Hello World
-   153	Hello World
-   154	-_- \\_(ツ)_/ $ exit
-   155	$
-   156	.fi
-   157	.RE
-   158
-   159	.SS Example 2: Non-Interactive Mode (Pipe)
-   160	.RS
-   161	.nf
-   162	$ echo "pwd" | ./shell
-   163	/home/user
-   164	$
-   165	.fi
-   166	.RE
-   167
-   168	.SS Example 3: Non-Interactive Mode (File)
-   169	.RS
-   170	.nf
-   171	$ cat commands.txt
-   172	pwd
-   173	ls
-   174	echo Done
-   175
-   176	$ ./shell < commands.txt
-   177	/home/user
-   178	file1 file2
-   179	Done
-   180	$
-   181	.fi
-   182	.RE
-   183
-   184	.SS Example 4: Using Absolute Paths
-   185	.RS
-   186	.nf
-   187	-_- \\_(ツ)_/ $ /bin/ls
-   188	file1 file2
-   189	-_- \\_(ツ)_/ $ /usr/bin/env
-   190	HOME=/home/user
-   191	...
-   192	.fi
-   193	.RE
-   194
-   195	.SS Example 5: Built-in Commands
-   196	.RS
-   197	.nf
-   198	-_- \\_(ツ)_/ $ env
-   199	PATH=/usr/local/bin:/usr/bin:/bin
-   200	HOME=/home/user
-   201	USER=user
-   202	-_- \\_(ツ)_/ $ exit
-   203	$
-   204	.fi
-   205	.RE
-   206
-   207	.SH LIMITATIONS
-   208	.B Simple Shell
-   209	does not implement the following features:
-   210	.IP \(bu 2
-   211	Redirections (>, <, >>)
-   212	.IP \(bu 2
-   213	Pipes (|)
-   214	.IP \(bu 2
-   215	Command separators (;, &&, ||)
-   216	.IP \(bu 2
-   217	Wildcards (*, ?, [...])
-   218	.IP \(bu 2
-   219	Variables ($VAR)
-   220	.IP \(bu 2
-   221	Special characters (", ', `, \\)
-   222	.IP \(bu 2
-   223	Job control
-   224	.IP \(bu 2
-   225	History
-   226	.IP \(bu 2
-   227	Aliases
-   228	.IP \(bu 2
-   229	Built-in cd command (not yet implemented)
-   230	.IP \(bu 2
-   231	Exit with status argument
-   232
-   233	.SH FILES
-   234	.TP
-   235	.I /bin/*
-   236	Common system commands
-   237	.TP
-   238	.I /usr/bin/*
-   239	User commands
-   240
-   241	.SH SIGNALS
-   242	.TP
-   243	.B SIGINT (Ctrl+C)
-   244	Interrupts the current foreground command. The shell itself continues to run and displays a new prompt.
-   245
-   246	.TP
-   247	.B SIGQUIT (Ctrl+\\)
-   248	Does not affect the shell.
-   249
-   250	.TP
-   251	.B EOF (Ctrl+D)
-   252	Causes the shell to exit cleanly.
-   253
-   254	.SH BUGS
-   255	No known bugs at this time.
-   256
-   257	Report bugs to: hugo.ramos@holbertonstudents.com or gwen.pichot@holbertonstudents.com
-   258
-   259	.SH AUTHORS
-   260	Written by Hugo Ramos and Gwenaëlle Pichot.
-   261
-   262	See the AUTHORS file in the source distribution for the complete list of contributors.
-   263
-   264	.SH SEE ALSO
-   265	.BR sh (1),
-   266	.BR bash (1),
-   267	.BR execve (2),
-   268	.BR fork (2),
-   269	.BR wait (2),
-   270	.BR getline (3),
-   271	.BR strtok (3),
-   272	.BR getenv (3)
-   273
-   274	.SH STANDARDS
-   275	.B Simple Shell
-   276	is inspired by the POSIX shell specification but does not claim full compliance.
-   277
-   278	.SH HISTORY
-   279	This
-   280	.B simple_shell
-   281	was created as a learning project at Holberton School in 2025.
-   282
-   283	.SH COPYRIGHT
-   284	Copyright (C) 2024 Hugo Ramos and Gwenaëlle Pichot.
-   285	This is free software; see the source for copying conditions.
-   286
-   287	.SH NOTES
-   288	This manual page documents version 1.0 of
-   289	.BR simple_shell .
-   290
-   291	The prompt
-   292	.B "-_- \\_(ツ)_/ $ "
-   293	is customizable in the source code by modifying the PROMPT macro in shell.h.
-   294
-   295	For more information, visit:
-   296	.UR https://github.com/hugou74130/holbertonschool-simple_shell
-   297	.UE
-   298
+.TH SIMPLE_SHELL 1 "December 2024" "Version 1.0" "Simple Shell Manual"
+
+.SH NAME
+simple_shell \- a simple UNIX command line interpreter
+
+.SH SYNOPSIS
+.B simple_shell
+.RI [ command_file ]
+
+.SH DESCRIPTION
+.B simple_shell
+is a basic UNIX command line interpreter written in C.
+It reads commands from standard input or from a file, parses them,
+and executes them by searching for executables in the directories
+listed in the PATH environment variable.
+
+The shell supports both interactive and non-interactive modes,
+built-in commands, and execution of external programs using
+system calls such as fork, execve, and wait.
+
+.SH INVOCATION
+.B simple_shell
+can be invoked in two different modes.
+
+.SS Interactive Mode
+When standard input is connected to a terminal, the shell runs in
+interactive mode. A prompt is displayed, and the shell waits for
+the user to type commands.
+
+Example:
+.PP
+.nf
+$ ./simple_shell
+-_- \_(ツ)_/ $ ls
+-_- \_(ツ)_/ $ exit
+.fi
+
+.SS Non-Interactive Mode
+When standard input is not connected to a terminal, the shell reads
+commands from standard input without displaying a prompt.
+
+Example:
+.PP
+.nf
+$ echo "ls -l" | ./simple_shell
+.fi
+
+.SH BUILT-IN COMMANDS
+The following built-in commands are implemented:
+
+.TP
+.B env
+Prints the current environment variables.
+
+.TP
+.B exit
+Exits the shell.
+
+.TP
+.B cd
+Changes the current working directory.
+(Current implementation is minimal.)
+
+.SH COMMAND EXECUTION
+If the command entered is not a built-in, the shell searches for the
+command in the directories listed in the PATH environment variable.
+If the executable is found and has execute permission, it is executed
+in a child process.
+
+If the command cannot be found, an error message is printed and
+the shell returns status 127.
+
+.SH RETURN VALUE
+The shell returns the exit status of the last executed command.
+If an error occurs during execution, an appropriate non-zero
+status is returned.
+
+.SH ENVIRONMENT
+The shell uses the following environment variables:
+
+.TP
+.B PATH
+Specifies the directories where executable programs are searched.
+
+.SH ERRORS
+If a command is not found, the shell prints an error message to
+standard error in the following format:
+
+.PP
+.nf
+program_name: line_number: command: not found
+.fi
+
+.SH FILES
+None.
+
+.SH LIMITATIONS
+This shell does not support:
+- Command chaining
+- Pipes
+- Redirections
+- Wildcards
+- Command history
+
+.SH AUTHORS
+Developed by:
+.TP
+.BR \- \ \fIhttps://github.com/hugou74130\fR
+.TP
+.BR \- \ \fIhttps://github.com/GwenP88\fR
+
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1)
