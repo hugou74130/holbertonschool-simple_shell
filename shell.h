@@ -10,7 +10,7 @@
 
 #define MAX_ARGS 1024
 #define MAX_PATH 4096
-#define PROMPT "Gwen a tout casser le shell "
+#define PROMPT "-_- \\_(ツ)_/ $ "
 #define EXIT_SHELL -2
 
 extern char **environ;
@@ -29,19 +29,23 @@ typedef struct builtin_s
 	int (*func)(void);
 } builtin_t;
 
-/* Fonctions built-in */
+/* Built-in functions */
 int builtin_exit(void);
 int builtin_env(void);
 int builtin_cd(void);
 
-/* Fonctions utilitaires */
-char *find_command(char *command);
-char *get_path(void);
-
-int execute_builtin(char *command);
-int is_builtin(char *command);
+/* Environment */
 char *_getenv(const char *name);
 
+/* Parsing / tokenization */
 int parse_line(char *line, char **argv, int max_args);
+
+/* Built-in handling */
+int is_builtin(char *command);
+int execute_builtin(char *command);
+
+/* PATH / command lookup */
+char *get_path(void);
+char *find_command(char *command);
 
 #endif
