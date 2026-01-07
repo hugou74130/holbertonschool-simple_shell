@@ -178,6 +178,20 @@ Output:
 
 ---
 
+## Error Handling
+
+The shell handles errors in a behavior similar to standard UNIX shells:
+
+- If a command is not found in `PATH` and is not an absolute path, an error message is printed to `stderr`.
+- If `execve` fails, the shell prints an error message and continues execution.
+- The shell returns exit status `127` when a command is not found.
+- The shell does not crash on invalid input (empty line, spaces only).
+- The shell exits cleanly when `exit` is called.
+
+All errors are handled without memory leaks.
+
+---
+
 ## Files Description
 
 | File                  | Description                              |
@@ -194,7 +208,8 @@ Output:
 
 ---
 
-Future Improvements
+## Future Improvements
+
 We are planning to continue developing this shell with the implementation of the cd command. Currently declared but not yet functional, we plan to fully implement this built-in command to allow directory navigation.
 
 This enhancement will make our shell more complete and functional for basic navigation tasks.
