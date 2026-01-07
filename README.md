@@ -14,6 +14,28 @@ This project focuses on:
 
 ---
 
+## Flowchart
+
+![Flowchart](./flowchart.png)
+
+---
+
+### Flowchart Explanation
+This flowchart describes the global behavior of the simple shell.
+The program starts by initializing its variables and then enters an infinite loop where it reads user input.
+
+If the shell is running in interactive mode, a prompt is displayed.
+The input line is read, cleaned, and parsed into arguments.
+If the command is a built-in (such as env or exit), it is executed directly inside the shell.
+
+If the command is external, the shell searches for it in the PATH.
+When the command is found, a child process is created using fork().
+The child executes the command with execve(), while the parent waits for its termination using waitpid() and retrieves the exit status.
+
+The shell continues looping until an exit command is issued or an end-of-file (EOF) is reached. The exit status of the last executed command is then returned.
+
+---
+
 ## Features
 
 - Interactive mode with custom prompt
