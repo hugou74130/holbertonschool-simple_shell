@@ -86,6 +86,19 @@ echo "ls" | ./hsh
 | `cd`    | Declared but not implemented   |
 
 ---
+## Manual Page
+
+This project includes a manual page describing the usage and behavior of the shell.
+The man page file is located at:
+
+`man_1_simple_shell`
+
+
+To display it, run:
+
+`man ./man_1_simple_shell`
+
+---
 
 ## Examples / Tests
 
@@ -205,6 +218,7 @@ All errors are handled without memory leaks.
 | `builtins_handler.c`  | Built-in detection and execution         |
 | `AUTHORS`             | List of contributors                     |
 | `README.md`           | Project documentation                    |
+| `man_1_simple_shell`  | Manual page for the shell                |
 
 ---
 
