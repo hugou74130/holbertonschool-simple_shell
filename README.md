@@ -32,7 +32,7 @@ This project focuses on:
 ## Requirements
 
 - Allowed editors: `vi`, `vim`, `emacs`
-- OS: **Ubuntu 20.04 LTS**
+- OS: **Ubuntu 24.04.3 LTS**
 - Compiler: `gcc`
 - Compilation flags:
   ```bash
@@ -49,7 +49,7 @@ This project focuses on:
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/holbertonschool-simple_shell.git
+git clone https://github.com/hugou74130/holbertonschool-simple_shell.git
 cd holbertonschool-simple_shell
 ```
 
@@ -235,7 +235,7 @@ This enhancement will make our shell more complete and functional for basic navi
 **Gwenaëlle Pichot**  
 GitHub: [https://github.com/GwenP88](https://github.com/GwenP88)
 
-**Hugo U.**  
+**Hugo Ramos**  
 GitHub: [https://github.com/hugou74130/holbertonschool-simple_shell](https://github.com/hugou74130/holbertonschool-simple_shell)
 
 ---
