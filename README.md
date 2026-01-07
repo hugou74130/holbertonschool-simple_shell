@@ -194,6 +194,13 @@ Output:
 
 ---
 
+Future Improvements
+We are planning to continue developing this shell with the implementation of the cd command. Currently declared but not yet functional, we plan to fully implement this built-in command to allow directory navigation.
+
+This enhancement will make our shell more complete and functional for basic navigation tasks.
+
+---
+
 ## Authors
 
 **Gwenaëlle Pichot**  
