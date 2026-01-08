@@ -16,7 +16,7 @@ This project focuses on:
 
 ## Flowchart
 
-![Flowchart](./Flowchart.png)
+![Flowchart](./flowchart.md)
 
 ---
 
