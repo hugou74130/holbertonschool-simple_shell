@@ -22,6 +22,7 @@ int builtin_env(void)
  *
  * Return: EXIT_SHELL to request shell termination
  */
+ 
 int builtin_exit(void)
 {
 	return (EXIT_SHELL);
