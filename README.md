@@ -16,10 +16,6 @@ This project focuses on:
 
 ## Flowchart
 
-![Flowchart](./flowchart.md)
-
----
-
 ### Flowchart Explanation
 This flowchart describes the global behavior of the simple shell.
 The program starts by initializing its variables and then enters an infinite loop where it reads user input.
