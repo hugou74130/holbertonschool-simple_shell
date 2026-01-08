@@ -34,6 +34,6 @@ int builtin_exit(void)
  */
 int builtin_cd(void)
 {
-	/* À implémenter plus tard */
+	/* to be implemented later */
 	return (0);
 }
